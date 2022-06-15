@@ -182,6 +182,97 @@ const MatrixData = mongoose.model("MatrixData", matrixSchema);
 
 const CompanyData = mongoose.model("CompanyData", companySchema)
 
+/////Bookings Upload///
+let bookingLoad = fs.readFileSync('data (1).json');
+let parsedBooked = JSON.parse(bookingLoad)
+let first = parsedBooked.length * 0.25
+let second = parsedBooked.length * 0.5
+let third = parsedBooked.length * 0.75
+// for(i = third; i <= parsedBooked.length-1; i++){
+//   mongoSubmitBooking = new MatrixData(parsedBooked[i])
+//   mongoSubmitBooking.save()
+//   console.log(parsedBooked[i].VortexRef + " Uploaded");
+// }
+// //Courses Upload///
+// let courseLoad = fs.readFileSync('Courses (1).json');
+// let parsedCourse = JSON.parse(courseLoad)
+// for(i = 0; i <= parsedCourse.length - 1; i++){
+//   mongoSubmitCourse = new CourseData(parsedCourse[i])
+//   mongoSubmitCourse.save()
+//   console.log(parsedCourse[i].AwardingBody + " Uploaded ");
+// }
+// //Organisation Upload///
+// let orgLoad = fs.readFileSync('Orgdata (2).json');
+// let parsedOrg = JSON.parse(orgLoad)
+// for(i = 0; i <= parsedOrg.length - 1; i++){
+//   mongoSubmitOrg = new CompanyData(parsedOrg[i])
+//   mongoSubmitOrg.save()
+//   console.log(parsedOrg[i].CompanyName + " Uploaded ");
+// }
+////VortexUserUpload///
+
+// bcrypt.hash('Lc0894!', saltRounds, function(err, hash) {
+//     if(err){
+//       console.log(err);
+//     } else {
+//       newUser = new UserModel ({
+//         FullName: "Lucy Churchill",
+//         EmailAddress: "lucy@vortexgroup.co.uk",
+//         Password: hash,
+//         MobileNumber: "",
+//         MainEmployee: false,
+//         AccessToVortal: true,
+//         VortalSite: 'Main'
+//       })
+//
+//       CompanyData.updateOne({_id: "6287c3971503c36a7baf4acd"},{$push:{User: newUser}}, {upsert: true},function(err, response){
+//         if (err){
+//           console.log(err);
+//         } else {
+//           console.log('*----New User Added ----*');
+//         }
+//       })
+//     }
+// })
+///DelegateUpload//
+let bookingLoadTwo = fs.readFileSync('data (4).json');
+let parsedDelegate = JSON.parse(bookingLoadTwo)
+// for(i = 0; i <= 0; i++){
+//   currentTitle = parsedDelegate[i].Title
+//   currentItem = parsedDelegate[i]
+//   console.log(currentTitle);
+//   let foundDelegates = ""
+//   MatrixData.find({VortexRef:parsedDelegate[i].Title}, function(err,foundData){
+//     if(foundData[0].Bookings[0].Delegates.length == 0){
+//       foundDelegates = true
+//     }
+//   })
+// if(foundDelegates = true){
+//   MatrixData.findOneAndUpdate({VortexRef:parsedDelegate[i].Title},{$push:{'Bookings.0.Delegates':{'UserId':currentItem.UserId,'FirstName' : currentItem.FirstName,'Surname':currentItem.Surname, 'DateOfBirth' :currentItem.DateOfBirth, 'Company' : currentItem.Company, 'MobileNumber' : currentItem.MobileNumber, 'EmailAddress':currentItem.EmailAddress, 'IdCheckType': currentItem.IdCheckType,'idCheckDigits': currentItem.IdCheckDigits, 'Course':[currentItem.Course]}}},function(err, response){
+//       if (err) {
+//             console.log(err);
+//       } else{
+//         console.log(currentTitle);
+//         console.log("*---- Delegate Updated ----*");
+//
+//       }
+//     })
+// }
+// }
+
+MatrixData.find({}, function(err, foundData){
+  for(i = 0; i <= 0; i++){
+    console.log(foundData[0].VortexRef);
+    MatrixData.updateOne( { _id: foundData[0]._id }, { $rename: { "Bookings.PO.Number": "Bookings.PONumber" } } , function(err,response){
+      console.log(err);
+      console.log(response);
+    })
+  }
+})
+app.get("/reactTest", function(req,res){
+  res.render("ReactTest")
+})
+
 app.get("/courses",function(req,res){
   CourseData.find(function(err,results){
     res.send(results)
@@ -340,7 +431,7 @@ switch (selectedFolder) {
     let fileName = element.originalname
     let fileKey = element.key
     let location = element.location
-    MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Register': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Register - added by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Register", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
+    MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Register': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Register - Sent in by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Register", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
   }
     break;
     case "Paperwork":
@@ -349,7 +440,7 @@ switch (selectedFolder) {
       let fileName = element.originalname
       let fileKey = element.key
       let location = element.location
-      MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Paperwork': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB") ,'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Paperwork - added by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Paperwork", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
+      MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Paperwork': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB") ,'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Paperwork - Sent in by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Paperwork", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
     }
       break;
       case "Frontsheet":
@@ -358,7 +449,7 @@ switch (selectedFolder) {
         let fileName = element.originalname
         let fileKey = element.key
         let location = element.location
-        MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.FrontSheets': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "FrontSheet(s) - added by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"FrontSheet(s)", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
+        MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.FrontSheets': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "FrontSheet(s) - Sent in by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"FrontSheet(s)", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
       }
         break;
       case "Cert/Card(s)":
@@ -398,7 +489,7 @@ switch (selectedFolder) {
     let fileName = element.originalname
     let fileKey = element.key
     let location = element.location
-    MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Register': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Register - added by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Register", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
+    MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Register': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Register - Sent in by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Register", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
   }
     break;
     case "Paperwork":
@@ -407,7 +498,7 @@ switch (selectedFolder) {
       let fileName = element.originalname
       let fileKey = element.key
       let location = element.location
-      MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Paperwork': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB") ,'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Paperwork - added by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Paperwork", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
+      MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.Paperwork': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB") ,'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "Paperwork - Sent in by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"Paperwork", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
     }
       break;
       case "Frontsheet":
@@ -416,7 +507,7 @@ switch (selectedFolder) {
         let fileName = element.originalname
         let fileKey = element.key
         let location = element.location
-        MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.FrontSheets': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "FrontSheet(s) - added by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"FrontSheet(s)", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
+        MatrixData.updateOne({_id: selectedId }, {$push : {'Documents.FrontSheets': {'FileName':fileName,'FileKey':fileKey,'Location' : location,'UploadedBy': req.body.uploadedBy,'Date':new Date().toLocaleDateString("EN-GB"), 'Status': 'Approved', 'Approval By': ""}, 'Notes':{'CreatedBy':uploadedBy,'CreatedAt' : new Date().toLocaleDateString("en-GB"),'Note': "FrontSheet(s) - Sent in by" + uploadedBy, "Severity":"Standard"}, 'PaperworkDetails': {'Type':"FrontSheet(s)", 'TaskCompleted':"Recieved", 'TaskDate': new Date().toLocaleDateString("en-GB"), 'CreatedBy':uploadedBy}}},{upsert:true, new: true},function(err, response){if(err){console.log(err)}})
       }
         break;
       case "Cert/Card(s)":
@@ -457,6 +548,11 @@ app.post("/bookingUpdate", function(req,res){
 
 
 app.post("/request" ,function(req, res) {
+  // var itemCount = ""
+  // MatrixData.find({}, function(err, foundData){
+  //   console.log(foundData.length);
+  // })
+console.log(req.body.postReqBooker);
   const startDate = req.body.postReqStart
   const endDate = req.body.postReqEnd
   const title = req.body.postReqTitle
@@ -496,7 +592,7 @@ app.post("/request" ,function(req, res) {
 
   })
 console.log(newItem);
-  newItem.save();
+  // newItem.save();
   res.send("ok!")
   // if(bookerEmail != undefined || bookerEmail != null || bookerEmail != ""){
   //   fs.readFile(__dirname+'/views/bookingEmail.ejs', 'utf8', function (err, data) {

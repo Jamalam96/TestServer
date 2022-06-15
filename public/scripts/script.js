@@ -245,12 +245,8 @@ setTimeout(function(){
             $("#stagePaidDate").val($(this.Paid).last()[0].Date).attr('data-originaldate',$(this.Paid).last()[0].Date)
           $(".matrixBookingDetails").append('<div class="matrixBookingSpecific"><li>Dates: '+new Date(this.Start).toLocaleDateString("EN-GB")+' - '+ new Date(this.End).toLocaleDateString("EN-GB") +'</li><li>Location: '+this.SiteLocation+'</li><li>Trainer: '+this.Trainer+'</li><li>Awarding Body: '+this.AwardingBody+' '+this.CardsIncluded+'</li><li>Courses: '+courseArr.toString().replaceAll(",","")+'</li></div>')
           let poRef = ""
-          if(this.PONumber == "" || this.PONumber == undefined || this.PONumber == null){
-            poRef = "Not Provided"
-          } else {
-            poRef = this.PONumber
-          }
-          let invoiceDetails = "<tr class='invDetails'><td class='trainingSpecs'>Training Booking: "  + courseArr.toString().replaceAll(",","") + '<li>'+new Date(this.Start).toLocaleDateString('en-gb')+'-'+new Date(this.End).toLocaleDateString('en-gb')+'</li>'+'<li>Location: '+this.SiteLocation+'</li>'+'<li> PO Number: '+poRef+'</li></td><td>'+this.TotalDays+'</td><td>'+this.Rate+'</td></tr><tr class="invDetails"><td class="cardsBooked">'+this.CardsIncluded+' accreditation for:'+ delArr.toString().replaceAll(",","")+'</td><td>'+delTotal+'</td><td>'+this.CardRate+'</td></tr>'
+          console.log(this.PO_Number);
+          let invoiceDetails = "<tr class='invDetails'><td class='trainingSpecs'>Training Booking: "  + courseArr.toString().replaceAll(",","") + '<li>'+new Date(this.Start).toLocaleDateString('en-gb')+'-'+new Date(this.End).toLocaleDateString('en-gb')+'</li>'+'<li>Location: '+this.SiteLocation+'</li>'+'<li> PO Number: '+this.PONumber+'</li></td><td>'+this.TotalDays+'</td><td>'+this.Rate+'</td></tr><tr class="invDetails"><td class="cardsBooked">'+this.CardsIncluded+' accreditation for:'+ delArr.toString().replaceAll(",","")+'</td><td>'+delTotal+'</td><td>'+this.CardRate+'</td></tr>'
           $(".invoiceScroll").children("table").append(invoiceDetails)
           $(".bookingItemsBar").append('<div class="itemBooking" data-specificId="'+this._id+'"> Booking - '+Number(i + 1)+' </div>')
           $(".itemBooking").eq(0).addClass("clickedBooking")
@@ -1199,7 +1195,6 @@ $("#start_date").on("change", function() {
             let dateNew = new Date(bookingDate)
             let intDate = dateNew.setDate(dateNew.getDate() + e)
             let nextDay = new Date(intDate)
-            console.log(data[i].VortexRef);
             let newDate = nextDay.toISOString().substr(0, 10)
             if (newDate == dateSelected) {
               activeTrainers.push(bookings[t].Trainer)
@@ -2644,7 +2639,7 @@ $(document).on("click",".qvEdit" ,function(){
           if(this._id == specificId){
             let courses = this.CourseInfo
             $.each(courses, function(i){
-              $(".editModeCourses").append('<div class="input-group quickEditMode editModeCourseItems"><div class="input-group-prepend"><label class="input-group-text" for="inputGroupSelect01">Course</label></div><input list="coursePicker" id="coursePickerInput" class="coursePickerSelect form-control editModeInputs" type="text" name="" value="'+this.Course+'" autocomplete="off"><datalist class="coursePicker" id="coursePicker" autocomplete="off"></datalist><div class="col-md-3"><select class="levelPicker form-select testType editModeInputs " name="levelPicker" id="levelPicker" name=""><option value="NPORS Testing Type">Select One</option><option value="Novice">Novice</option><option value="Refresher">Refresher</option><option value="EWT">EWT</option><option value="Conversion">Conversion</option></select></div><div class="col-md-1"><input class="form-control bookedDel editModeInputs" type="text" name="" value="'+this.BookedDelegates+'"></div><div class="addRowContainer addcourseRowEditMode">+</div></div>')
+              $(".editModeCourses").append('<div class="input-group quickEditMode"><div class="input-group-prepend"><label class="input-group-text" for="inputGroupSelect01">Course</label></div><input list="coursePicker" id="coursePickerInput" class="coursePickerSelect form-control editModeInputs" type="text" name="" value="'+this.Course+'" autocomplete="off"><datalist class="coursePicker" id="coursePicker" autocomplete="off"></datalist><div class="col-md-3"><select class="levelPicker form-select testType editModeInputs " name="levelPicker" id="levelPicker" name=""><option value="NPORS Testing Type">Select One</option><option value="Novice">Novice</option><option value="Refresher">Refresher</option><option value="EWT">EWT</option><option value="Conversion">Conversion</option></select></div><div class="col-md-1"><input class="form-control bookedDel editModeInputs" type="text" name="" value="'+this.BookedDelegates+'"></div><div class="addRowContainer addcourseRowEditMode">+</div></div>')
               $(".editModeCourses").eq(i).find(".levelPicker").val(this.TestingType)
             })
           }
@@ -2691,7 +2686,7 @@ $(document).on("click", ".quickEditSubmit", function(){
   let trainer = $(".quickViewEditMode").find("#edittrainerSelect").val()
   let location =$(".quickViewEditMode").find("#editLocation").val()
   let courses = []
-  $(".editModeCourseItems").each(function(){
+  $(".editModeCourses").each(function(){
     let courseDetails = {
       Course: $(this).find(".coursePickerSelect").val(),
       BookedDelegates: $(this).find(".bookedDel").val(),
